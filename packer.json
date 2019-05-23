@@ -1,0 +1,45 @@
+{
+	"variables": {
+		"dockerhub_password": ""
+	},
+	"sensitive-variables": ["dockerhub_password"],
+	"builders": [
+		{
+			"type": "docker",
+			"commit": true,
+			"image": "openjdk:11-jre"
+		}
+	],
+	"provisioners": [
+		{
+			"type": "file",
+			"source": "fop-2.3-bin.tar.gz.sha512",
+			"destination": "/tmp/"
+		},
+		{
+			"type": "shell",
+			"inline": [
+				"wget -nv http://archive.apache.org/dist/xmlgraphics/fop/binaries/fop-2.3-bin.tar.gz",
+				"sha512sum -c /tmp/fop-2.3-bin.tar.gz.sha512",
+				"tar xf fop-2.3-bin.tar.gz -C /opt",
+				"echo 'PATH=/opt/fop-2.3/fop:$PATH' >>/etc/environment",
+				"rm -f fop-2.3-bin.tar.gz /tmp/fop-2.3-bin.tar.gz.sha512"
+			]
+		}
+	],
+	"post-processors": [
+		[
+			{
+				"type": "docker-tag",
+				"repository": "dutch/fop",
+				"tag": "latest"
+			},
+			{
+				"type": "docker-push",
+				"login": true,
+				"login_username": "dutch",
+				"login_password": "{{user `dockerhub_password`}}"
+			}
+		]
+	]
+}
