@@ -13,7 +13,7 @@
 	"provisioners": [
 		{
 			"type": "file",
-			"source": "fop-2.3-bin.tar.gz.sha512",
+			"source": "source/files/fop-2.3-bin.tar.gz.sha512",
 			"destination": "/tmp/"
 		},
 		{
